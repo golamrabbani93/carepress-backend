@@ -1,45 +1,46 @@
 import { z } from 'zod'
-import { Role } from './user.constant'
+import mongoose from 'mongoose'
 
 export const UserUpdateValidatioonSchema = z.object({
   body: z.object({
+    _id: z.instanceof(mongoose.Types.ObjectId).optional(), // _id is optional
+
     name: z
       .string({
-        invalid_type_error: 'Name must be string',
+        invalid_type_error: 'Name must be a string',
         required_error: 'Name is required',
       })
-      .min(1)
+      .min(1, { message: 'Name must not be empty' }) // Ensure name is not empty
+
       .optional(),
+
     email: z
       .string({
-        invalid_type_error: 'Email must be string',
+        invalid_type_error: 'Email must be a string',
         required_error: 'Email is required',
       })
-      .email({ message: 'Email is required And Email must be string' })
+      .email({ message: 'Email must be a valid email address' }) // Validate email format
+
       .optional(),
+
     password: z
       .string({
-        invalid_type_error: 'Password must be String',
+        invalid_type_error: 'Password must be a string',
         required_error: 'Password is required',
       })
-      .min(4, { message: 'Password must be 4 charecter or more ' })
+      .min(4, { message: 'Password must be at least 4 characters long' }) // Minimum length for password
+
       .optional(),
+
+    profilePicture: z
+      .string({
+        invalid_type_error: 'Profile picture must be a string',
+      })
+      .optional(),
+
     phone: z
       .string({
-        invalid_type_error: 'Phone Number must be String',
-        required_error: 'Phone Number is required',
-      })
-      .optional(),
-    address: z
-      .string({
-        invalid_type_error: 'Address must be String',
-        required_error: 'Address is required',
-      })
-      .optional(),
-    role: z
-      .enum([...Role] as [string, ...string[]], {
-        invalid_type_error: 'Role must be String',
-        required_error: 'Role is required',
+        invalid_type_error: 'Phone number must be a string',
       })
       .optional(),
   }),

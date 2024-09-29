@@ -29,9 +29,15 @@ const loginUser = async (payload: TLoginUser) => {
   //* Create JWT token and sent to the  client
 
   const jwtPayload = {
-    userId: existsUser._id,
-    userEmail: existsUser.email,
+    _id: existsUser._id,
+    name: existsUser.name,
+    email: existsUser.email,
+    profilePicture: existsUser.profilePicture,
+    followers: existsUser.followers || [],
+    following: existsUser.following || [],
     role: existsUser.role,
+    createdAt: existsUser.createdAt,
+    updatedAt: existsUser.updatedAt,
   }
   const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, {
     expiresIn: '30d',

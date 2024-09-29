@@ -23,10 +23,10 @@ const auth = (...requiredRoles: TUserRole[]) => {
       config.jwt_access_secret as string,
     ) as JwtPayload
 
-    const { role, userEmail } = decoded
+    const { role, email } = decoded
 
     // * Check User is Exists in Database
-    const existsUser = await User.isUserExistsByEmail(userEmail)
+    const existsUser = await User.isUserExistsByEmail(email)
     if (!existsUser) {
       return sendResponse(res, {
         success: false,

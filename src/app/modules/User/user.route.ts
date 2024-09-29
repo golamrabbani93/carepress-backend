@@ -4,6 +4,8 @@ import auth from '../../middlewares/auth'
 import { USER_ROLE } from './user.constant'
 import validateRequest from '../../middlewares/validateRequest'
 import { userValidation } from './user.validation'
+import { multerUpload } from '../../config/multer.config'
+import { parseBody } from '../../middlewares/bodyParser'
 
 const router = express.Router()
 
@@ -11,22 +13,28 @@ const router = express.Router()
 
 router.get(
   '/me',
-  auth(USER_ROLE.user, USER_ROLE.admin),
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
   userControllers.getSingleUser,
 )
 //* Get ALl user Route
-router.get('/', auth(USER_ROLE.admin), userControllers.getAllUser)
+router.get(
+  '/',
+  auth(USER_ROLE.ADMIN, USER_ROLE.USER),
+  userControllers.getAllUser,
+)
 
 //* Update A single user Route
 router.put(
   '/me',
-  auth(USER_ROLE.user, USER_ROLE.admin),
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
+  multerUpload.single('image'),
+  parseBody,
   validateRequest(userValidation.UserUpdateValidatioonSchema),
   userControllers.updateSingleUser,
 )
 router.put(
   '/make-admin/:id',
-  auth(USER_ROLE.admin),
+  auth(USER_ROLE.ADMIN),
   userControllers.updateAdminUser,
 )
 

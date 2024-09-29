@@ -5,7 +5,7 @@ import { TUser } from './user.interface'
 // *Get User Profile From Database
 const getSingleUserFromDB = async (payload: JwtPayload) => {
   const result = await User.findOne({
-    email: payload?.userEmail,
+    email: payload?.email,
     role: payload?.role,
   })
   return result
@@ -23,10 +23,14 @@ const updateSingleUserIntoDB = async (
   payload: Partial<TUser>,
 ) => {
   const result = await User.findOneAndUpdate(
-    { email: userData?.userEmail },
+    { email: userData?.email },
     {
       name: payload?.name,
       phone: payload?.phone,
+      email: payload?.email,
+      followers: payload?.followers,
+      following: payload?.following,
+      profilePicture: payload?.profilePicture,
     },
     {
       new: true,
@@ -38,7 +42,7 @@ const makeAdminUserIntoDB = async (id: string) => {
   const result = await User.findByIdAndUpdate(
     id,
     {
-      role: 'admin',
+      role: 'ADMIN',
     },
     {
       new: true,

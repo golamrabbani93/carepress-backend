@@ -4,7 +4,7 @@ import { userServices } from './user.service'
 import sendResponse from '../../utils/sendResponse'
 import httpStatus from 'http-status'
 
-// *Get Single User Profile
+// *Get All Single User Profile
 const getAllUser = catchAsync(async (req: Request, res: Response) => {
   const result = await userServices.getAllUserFromDB()
   if (result.length > 0) {
@@ -39,9 +39,11 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
 const updateSingleUser = catchAsync(async (req: Request, res: Response) => {
   const userData = req.user
   const updatedData = req.body
+  const image = req.file
+  const newUserUpadatedData = { ...updatedData, profilePicture: image?.path }
   const result = await userServices.updateSingleUserIntoDB(
     userData,
-    updatedData,
+    newUserUpadatedData,
   )
   sendResponse(res, {
     statusCode: httpStatus.OK,

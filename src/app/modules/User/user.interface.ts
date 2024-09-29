@@ -14,6 +14,8 @@ export interface TUser {
   followers?: mongoose.Types.ObjectId[]
   following?: mongoose.Types.ObjectId[]
   role?: TRole
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface UserModel extends Model<TUser> {
