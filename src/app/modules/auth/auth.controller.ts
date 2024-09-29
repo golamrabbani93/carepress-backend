@@ -6,8 +6,10 @@ import { Request, Response } from 'express'
 
 // *Register A User
 const RegisterUser = catchAsync(async (req: Request, res: Response) => {
+  const image = req.file
   const userData = req.body
-  const result = await authServices.registerUserIntoDB(userData)
+  const newUser = { ...userData, profilePicture: image?.path }
+  const result = await authServices.registerUserIntoDB(newUser)
   sendResponse(res, {
     statusCode: 201,
     success: true,
