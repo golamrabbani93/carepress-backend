@@ -1,12 +1,5 @@
 import mongoose from 'mongoose'
 
-export interface IComment {
-  author: string
-  content: string
-  createdAt: Date
-  replies?: IComment[]
-}
-
 export interface IPost {
   title: string
   content: string
@@ -15,7 +8,7 @@ export interface IPost {
   upvotes: number
   downvotes: number
   category: 'Tip' | 'Story'
-  comments: IComment[]
+  comments: mongoose.Types.ObjectId[]
   isPremium: boolean
   premiumPrice: number
   createdAt?: Date
