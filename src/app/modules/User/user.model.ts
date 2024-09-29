@@ -48,6 +48,7 @@ const UserSchema = new Schema<TUser, UserModel>(
     ],
     role: {
       type: String,
+
       default: USER_ROLE.USER,
     },
   },
@@ -72,6 +73,7 @@ const UserSchema = new Schema<TUser, UserModel>(
 UserSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this
+  user.role = USER_ROLE.USER
 
   user.password = await bcrypt.hash(
     user.password,
