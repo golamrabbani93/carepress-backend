@@ -16,8 +16,13 @@ const createCommentIntoDatabase = async (payload: IComment) => {
     if (!post) {
       throw new AppError(httpStatus.NOT_FOUND, 'Post not found')
     }
+    //* create comment
+    const result = await Comment.create(payload)
+    if (!result) {
+      throw new AppError(httpStatus.NOT_IMPLEMENTED, 'Comment not created')
+    }
     //* Update the post with the new comment
-    const updatedComments = [...post.comments, payload.author]
+    const updatedComments = [...post.comments, result._id]
 
     const UpdatedPost = await Post.findByIdAndUpdate(payload.post, {
       comments: updatedComments,
@@ -25,8 +30,7 @@ const createCommentIntoDatabase = async (payload: IComment) => {
     if (!UpdatedPost?._id) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Comment not created')
     }
-    //* Create the comment
-    const result = await Comment.create(payload)
+
     await session.commitTransaction()
     await session.endSession()
     return result

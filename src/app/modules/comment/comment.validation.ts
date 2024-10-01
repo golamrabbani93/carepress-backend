@@ -4,8 +4,8 @@ import { z } from 'zod'
 export const CommentValidationSchema = z.object({
   body: z.object({
     post: z.string({
-      required_error: 'Author is required',
-      invalid_type_error: 'Author must be a string',
+      required_error: 'Post is required',
+      invalid_type_error: 'Post must be a string',
     }),
     author: z.string({
       required_error: 'Author is required',

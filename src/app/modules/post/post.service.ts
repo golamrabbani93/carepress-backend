@@ -26,6 +26,7 @@ const getAllPostsFromDatabase = async (query: Record<string, unknown>) => {
     .populate('author')
     .populate('upvotes')
     .populate('downvotes')
+    .populate('comments')
 
   const result = await postQuery.modelQuery
   return result
