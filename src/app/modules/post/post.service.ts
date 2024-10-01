@@ -26,7 +26,11 @@ const getAllPostsFromDatabase = async (query: Record<string, unknown>) => {
     .populate('author')
     .populate('upvotes')
     .populate('downvotes')
-    .populate('comments')
+    .populate({
+      path: 'comments',
+      populate: { path: 'author' },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
 
   const result = await postQuery.modelQuery
   return result
