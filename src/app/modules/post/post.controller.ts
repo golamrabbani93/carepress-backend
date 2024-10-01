@@ -61,9 +61,23 @@ const deletePost = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+// !Post up vote
+const upadteUpVote = catchAsync(async (req: Request, res: Response) => {
+  const postId = req.params.id
+  const user = req.user
+  const result = await postServices.upadteUpVoteIntoDB(postId, user)
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Post upvoted successfully',
+    data: result,
+  })
+})
+
 export const postControllers = {
   createPost,
   getAllPosts,
   updatePost,
   deletePost,
+  upadteUpVote,
 }

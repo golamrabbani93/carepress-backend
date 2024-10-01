@@ -50,6 +50,10 @@ const UserSchema = new Schema<TUser, UserModel>(
       type: String,
       default: USER_ROLE.USER,
     },
+    upvotes: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

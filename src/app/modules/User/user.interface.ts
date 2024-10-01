@@ -16,6 +16,7 @@ export interface TUser {
   role?: TRole
   createdAt?: string
   updatedAt?: string
+  upvotes?: number
 }
 
 export interface UserModel extends Model<TUser> {

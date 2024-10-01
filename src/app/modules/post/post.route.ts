@@ -42,4 +42,7 @@ router.delete(
   postControllers.deletePost,
 )
 
+// *upvote
+router.put('/upvote/:id', auth(USER_ROLE.USER), postControllers.upadteUpVote)
+
 export const postRoutes = router

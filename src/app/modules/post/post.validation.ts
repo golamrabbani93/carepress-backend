@@ -38,21 +38,8 @@ export const PostValidationSchema = z.object({
       required_error: 'Author ID is required',
       invalid_type_error: 'Author ID must be a string',
     }),
-    upvotes: z
-      .number()
-      .int()
-      .nonnegative({
-        message: 'Upvotes must be a non-negative integer',
-      })
-      .default(0),
-    downvotes: z
-      .number()
-      .int()
-      .nonnegative({
-        message: 'Downvotes must be a non-negative integer',
-      })
-      .default(0),
-    category: z.enum(['Tip', 'Story'], {
+
+    category: z.enum(['Tips', 'Story'], {
       required_error: 'Category is required',
       invalid_type_error: 'Category must be either "Tip" or "Story"',
     }),
