@@ -73,6 +73,18 @@ const upadteUpVote = catchAsync(async (req: Request, res: Response) => {
     data: result,
   })
 })
+// !Post down vote
+const upadteDownVote = catchAsync(async (req: Request, res: Response) => {
+  const postId = req.params.id
+  const user = req.user
+  const result = await postServices.updateDownVoteIntoDB(postId, user)
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Post Downvoted successfully',
+    data: result,
+  })
+})
 
 export const postControllers = {
   createPost,
@@ -80,4 +92,5 @@ export const postControllers = {
   updatePost,
   deletePost,
   upadteUpVote,
+  upadteDownVote,
 }

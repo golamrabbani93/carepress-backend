@@ -54,6 +54,10 @@ const UserSchema = new Schema<TUser, UserModel>(
       type: Number,
       default: 0,
     },
+    downvotes: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

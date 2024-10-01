@@ -17,6 +17,7 @@ export interface TUser {
   createdAt?: string
   updatedAt?: string
   upvotes?: number
+  downvotes?: number
 }
 
 export interface UserModel extends Model<TUser> {
