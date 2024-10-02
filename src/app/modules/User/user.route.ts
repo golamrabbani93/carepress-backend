@@ -37,5 +37,6 @@ router.put(
   auth(USER_ROLE.ADMIN),
   userControllers.updateAdminUser,
 )
+router.put('/follow/:id', auth(USER_ROLE.USER), userControllers.followUser)
 
 export const userRoutes = router

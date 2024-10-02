@@ -64,9 +64,24 @@ const updateAdminUser = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+// *follow User
+
+const followUser = catchAsync(async (req: Request, res: Response) => {
+  const followerUserID = req.params.id as string
+  const user = req.user
+  const result = await userServices.followUserIntoDB(followerUserID, user)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User Followed successfully',
+    data: result,
+  })
+})
+
 export const userControllers = {
   getSingleUser,
   updateSingleUser,
   getAllUser,
   updateAdminUser,
+  followUser,
 }
