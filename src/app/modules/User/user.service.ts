@@ -118,13 +118,50 @@ const followUserIntoDB = async (followerUserID: string, user: JwtPayload) => {
 }
 
 // *Unfollow User
-const unfollowUserIntoDB = async (followingId: string, user: JwtPayload) => {
-  const result = await User.findByIdAndUpdate(
-    followingId,
-    { $pull: { following: user?._id } },
-    { new: true },
-  )
-  return result
+const unFollowUserIntoDB = async (followerUserID: string, user: JwtPayload) => {
+  const session = await mongoose.startSession()
+
+  try {
+    session.startTransaction()
+
+    //* Check if the user exists
+    const checkUser = await User.findById(followerUserID)
+
+    if (!checkUser) {
+      throw new AppError(httpStatus.NOT_FOUND, 'User Not Found')
+    }
+
+    //* Update the user with the new follower
+    const userFollower = await User.findByIdAndUpdate(
+      checkUser?._id,
+      { $pull: { followers: user?._id } },
+      { new: true },
+    )
+    if (!userFollower) {
+      throw new AppError(httpStatus.NOT_MODIFIED, 'User UnFollow Unsuccessful')
+    }
+
+    //* Update the user with the new following
+    const result = await User.findByIdAndUpdate(
+      user?._id,
+      { $pull: { following: userFollower._id } },
+      { new: true },
+    )
+
+    if (!result) {
+      throw new AppError(httpStatus.NOT_MODIFIED, 'User UnFollow Unsuccessful')
+    }
+    await session.commitTransaction()
+    await session.endSession()
+    return result
+  } catch (error) {
+    await session.abortTransaction()
+    await session.endSession()
+    throw new AppError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'User Unfollow Unsuccessful',
+    )
+  }
 }
 
 export const userServices = {
@@ -133,5 +170,5 @@ export const userServices = {
   getAllUserFromDB,
   makeAdminUserIntoDB,
   followUserIntoDB,
-  unfollowUserIntoDB,
+  unFollowUserIntoDB,
 }

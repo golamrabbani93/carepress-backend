@@ -39,4 +39,6 @@ router.put(
 )
 router.put('/follow/:id', auth(USER_ROLE.USER), userControllers.followUser)
 
+router.put('/unfollow/:id', auth(USER_ROLE.USER), userControllers.unFollowUser)
+
 export const userRoutes = router
