@@ -39,7 +39,7 @@ export const PostValidationSchema = z.object({
       invalid_type_error: 'Author ID must be a string',
     }),
 
-    category: z.enum(['Tips', 'Story'], {
+    category: z.enum(['Tip', 'Story'], {
       required_error: 'Category is required',
       invalid_type_error: 'Category must be either "Tip" or "Story"',
     }),

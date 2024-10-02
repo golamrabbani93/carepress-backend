@@ -13,7 +13,7 @@ const PostSchema = new Schema<IPost>(
     },
     upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     downvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    category: { type: String, enum: ['Tips', 'Story'], required: true },
+    category: { type: String, enum: ['Tip', 'Story'], required: true },
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
     isPremium: { type: Boolean, default: false },
     premiumPrice: { type: Number, default: 0 },
