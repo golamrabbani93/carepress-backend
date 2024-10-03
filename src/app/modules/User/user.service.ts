@@ -203,6 +203,12 @@ const unFollowUserIntoDB = async (followerUserID: string, user: JwtPayload) => {
   }
 }
 
+// * delete user from database
+const deleteUserFromDB = async (id: string) => {
+  const result = await User.findByIdAndDelete(id)
+  return result
+}
+
 export const userServices = {
   getSingleUserFromDB,
   updateSingleUserIntoDB,
@@ -212,4 +218,5 @@ export const userServices = {
   unFollowUserIntoDB,
   blockUserIntoDB,
   unBlockUserIntoDB,
+  deleteUserFromDB,
 }

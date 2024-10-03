@@ -37,10 +37,19 @@ router.put(
   auth(USER_ROLE.ADMIN),
   userControllers.updateAdminUser,
 )
+router.delete('/:id', auth(USER_ROLE.ADMIN), userControllers.deleteUser)
 router.put('/block/:id', auth(USER_ROLE.ADMIN), userControllers.blockUser)
 router.put('/unblock/:id', auth(USER_ROLE.ADMIN), userControllers.unBlockUser)
-router.put('/follow/:id', auth(USER_ROLE.USER), userControllers.followUser)
+router.put(
+  '/follow/:id',
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
+  userControllers.followUser,
+)
 
-router.put('/unfollow/:id', auth(USER_ROLE.USER), userControllers.unFollowUser)
+router.put(
+  '/unfollow/:id',
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
+  userControllers.unFollowUser,
+)
 
 export const userRoutes = router

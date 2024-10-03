@@ -16,7 +16,7 @@ const router = express.Router()
 
 router.post(
   '/create-post',
-  auth(USER_ROLE.USER),
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
   multerUpload.fields([{ name: 'images' }]),
   validateImageFileRequest(ImageFilesArrayZodSchema),
   parseBody,
@@ -24,13 +24,17 @@ router.post(
   postControllers.createPost,
 )
 //* get mY posts
-router.get('/me', auth(USER_ROLE.USER), postControllers.getMyPosts)
+router.get(
+  '/me',
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
+  postControllers.getMyPosts,
+)
 //* get all posts
 router.get('/', postControllers.getAllPosts)
 //* update post
 router.put(
   '/:id',
-  auth(USER_ROLE.USER),
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
   multerUpload.fields([{ name: 'images' }]),
   // validateImageFileRequest(ImageFilesArrayZodSchema),
   parseBody,
@@ -45,11 +49,15 @@ router.delete(
 )
 
 // *upvote
-router.put('/upvote/:id', auth(USER_ROLE.USER), postControllers.upadteUpVote)
+router.put(
+  '/upvote/:id',
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
+  postControllers.upadteUpVote,
+)
 // *downvote
 router.put(
   '/downvote/:id',
-  auth(USER_ROLE.USER),
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
   postControllers.upadteDownVote,
 )
 

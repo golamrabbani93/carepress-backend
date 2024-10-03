@@ -114,6 +114,18 @@ const unFollowUser = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+// *delete User
+const deleteUser = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id as string
+  const result = await userServices.deleteUserFromDB(id)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User deleted successfully',
+    data: result,
+  })
+})
+
 export const userControllers = {
   getSingleUser,
   updateSingleUser,
@@ -123,4 +135,5 @@ export const userControllers = {
   unFollowUser,
   blockUser,
   unBlockUser,
+  deleteUser,
 }
