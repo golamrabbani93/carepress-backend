@@ -320,6 +320,16 @@ const updateDownVoteIntoDB = async (postId: string, payload: JwtPayload) => {
   }
 }
 
+const togglePostStatusIntoDB = async (postId: string) => {
+  const post = await Post.findById(postId)
+  if (!post) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Post not found')
+  }
+  const status = post.status ? false : true
+  const result = await Post.findByIdAndUpdate(postId, { status }, { new: true })
+  return result
+}
+
 export const postServices = {
   createPostIntoDatabase,
   getMyPostsFromDatabase,
@@ -328,4 +338,5 @@ export const postServices = {
   deletePostFromDatabase,
   upadteUpVoteIntoDB,
   updateDownVoteIntoDB,
+  togglePostStatusIntoDB,
 }

@@ -16,6 +16,7 @@ const PostSchema = new Schema<IPost>(
     category: { type: String, enum: ['Tip', 'Story'], required: true },
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
     isPremium: { type: Boolean, default: false },
+    status: { type: Boolean, default: true },
     premiumPrice: { type: Number, default: 0 },
   },
   { timestamps: true },

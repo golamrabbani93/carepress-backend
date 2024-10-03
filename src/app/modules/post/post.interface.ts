@@ -10,6 +10,7 @@ export interface IPost {
   category: 'Tip' | 'Story'
   comments: mongoose.Types.ObjectId[]
   isPremium: boolean
+  status: boolean
   premiumPrice: number
   createdAt?: Date
   updatedAt?: Date

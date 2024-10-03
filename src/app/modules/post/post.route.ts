@@ -53,4 +53,11 @@ router.put(
   postControllers.upadteDownVote,
 )
 
+// * post status update
+router.put(
+  '/status/:id',
+  auth(USER_ROLE.ADMIN),
+  postControllers.togglePostStatus,
+)
+
 export const postRoutes = router

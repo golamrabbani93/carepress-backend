@@ -98,6 +98,18 @@ const upadteDownVote = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+// *toggle post status
+const togglePostStatus = catchAsync(async (req: Request, res: Response) => {
+  const postId = req.params.id
+  const result = await postServices.togglePostStatusIntoDB(postId)
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Post status changed successfully',
+    data: result,
+  })
+})
+
 export const postControllers = {
   createPost,
   getMyPosts,
@@ -106,4 +118,5 @@ export const postControllers = {
   deletePost,
   upadteUpVote,
   upadteDownVote,
+  togglePostStatus,
 }
