@@ -37,6 +37,8 @@ router.put(
   auth(USER_ROLE.ADMIN),
   userControllers.updateAdminUser,
 )
+router.put('/block/:id', auth(USER_ROLE.ADMIN), userControllers.blockUser)
+router.put('/unblock/:id', auth(USER_ROLE.ADMIN), userControllers.unBlockUser)
 router.put('/follow/:id', auth(USER_ROLE.USER), userControllers.followUser)
 
 router.put('/unfollow/:id', auth(USER_ROLE.USER), userControllers.unFollowUser)

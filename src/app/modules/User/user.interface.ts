@@ -14,6 +14,7 @@ export interface TUser {
   followers?: mongoose.Types.ObjectId[]
   following?: mongoose.Types.ObjectId[]
   role?: TRole
+  status?: string
   createdAt?: string
   updatedAt?: string
   upvotes?: number

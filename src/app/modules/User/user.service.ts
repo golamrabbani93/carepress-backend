@@ -41,11 +41,50 @@ const updateSingleUserIntoDB = async (
   )
   return result
 }
+
 const makeAdminUserIntoDB = async (id: string) => {
   const result = await User.findByIdAndUpdate(
     id,
     {
       role: 'ADMIN',
+    },
+    {
+      new: true,
+    },
+  )
+  return result
+}
+const blockUserIntoDB = async (id: string) => {
+  const user = await User.findById(id)
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User Not Found')
+  }
+  if (user.role === 'ADMIN') {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'You cannot block an admin')
+  }
+
+  const result = await User.findByIdAndUpdate(
+    id,
+    {
+      status: 'blocked',
+    },
+    {
+      new: true,
+    },
+  )
+  return result
+}
+
+const unBlockUserIntoDB = async (id: string) => {
+  const user = await User.findById(id)
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User Not Found')
+  }
+
+  const result = await User.findByIdAndUpdate(
+    id,
+    {
+      status: 'basic',
     },
     {
       new: true,
@@ -171,4 +210,6 @@ export const userServices = {
   makeAdminUserIntoDB,
   followUserIntoDB,
   unFollowUserIntoDB,
+  blockUserIntoDB,
+  unBlockUserIntoDB,
 }

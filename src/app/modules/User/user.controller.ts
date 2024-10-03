@@ -64,6 +64,28 @@ const updateAdminUser = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+const blockUser = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id as string
+
+  const result = await userServices.blockUserIntoDB(id)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User Blocked successfully',
+    data: result,
+  })
+})
+const unBlockUser = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id as string
+  const result = await userServices.unBlockUserIntoDB(id)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User Unblocked successfully',
+    data: result,
+  })
+})
+
 // *follow User
 
 const followUser = catchAsync(async (req: Request, res: Response) => {
@@ -77,6 +99,7 @@ const followUser = catchAsync(async (req: Request, res: Response) => {
     data: result,
   })
 })
+
 // *unfollow User
 
 const unFollowUser = catchAsync(async (req: Request, res: Response) => {
@@ -98,4 +121,6 @@ export const userControllers = {
   updateAdminUser,
   followUser,
   unFollowUser,
+  blockUser,
+  unBlockUser,
 }
