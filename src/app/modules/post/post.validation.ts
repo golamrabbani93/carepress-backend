@@ -23,10 +23,7 @@ export const PostValidationSchema = z.object({
       required_error: 'Title is required',
       invalid_type_error: 'Title must be a string',
     }),
-    content: z.string({
-      required_error: 'Content is required',
-      invalid_type_error: 'Content must be a string',
-    }),
+
     images: z
       .array(
         z.string().url({
