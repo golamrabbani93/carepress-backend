@@ -22,6 +22,18 @@ const createPost = catchAsync(async (req: Request, res: Response) => {
   })
 })
 // * get all posts from database
+const getMyPosts = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user
+  const result = await postServices.getMyPostsFromDatabase(user)
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'MY Posts fetched successfully',
+    data: result,
+  })
+})
+
+// * get all posts from database
 const getAllPosts = catchAsync(async (req: Request, res: Response) => {
   const query = req.query
   const result = await postServices.getAllPostsFromDatabase(query)
@@ -88,6 +100,7 @@ const upadteDownVote = catchAsync(async (req: Request, res: Response) => {
 
 export const postControllers = {
   createPost,
+  getMyPosts,
   getAllPosts,
   updatePost,
   deletePost,

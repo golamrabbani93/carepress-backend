@@ -16,6 +16,21 @@ const createPostIntoDatabase = async (payload: IPost) => {
   return result
 }
 
+//* get My post from database
+const getMyPostsFromDatabase = async (payload: JwtPayload) => {
+  const result = await Post.find({ author: payload._id })
+    .populate('author')
+    .populate('upvotes')
+    .populate('downvotes')
+    .populate({
+      path: 'comments',
+      populate: { path: 'author' },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
+
+  return result
+}
+
 const getAllPostsFromDatabase = async (query: Record<string, unknown>) => {
   const postQuery = new QueryBuilder(Post.find(), query)
     .filter()
@@ -307,6 +322,7 @@ const updateDownVoteIntoDB = async (postId: string, payload: JwtPayload) => {
 
 export const postServices = {
   createPostIntoDatabase,
+  getMyPostsFromDatabase,
   getAllPostsFromDatabase,
   updatePostIntoDatabase,
   deletePostFromDatabase,

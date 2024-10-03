@@ -23,6 +23,8 @@ router.post(
   validateRequest(postValidation.PostValidationSchema),
   postControllers.createPost,
 )
+//* get mY posts
+router.get('/me', auth(USER_ROLE.USER), postControllers.getMyPosts)
 //* get all posts
 router.get('/', postControllers.getAllPosts)
 //* update post
