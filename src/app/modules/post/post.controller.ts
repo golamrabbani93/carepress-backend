@@ -112,6 +112,17 @@ const togglePostStatus = catchAsync(async (req: Request, res: Response) => {
     data: result,
   })
 })
+//*get single post
+const getSinglePost = catchAsync(async (req: Request, res: Response) => {
+  const postId = req.params.id
+  const result = await postServices.getSinglePostFromDatabase(postId)
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Post fetched successfully',
+    data: result,
+  })
+})
 
 export const postControllers = {
   createPost,
@@ -122,4 +133,5 @@ export const postControllers = {
   upadteUpVote,
   upadteDownVote,
   togglePostStatus,
+  getSinglePost,
 }

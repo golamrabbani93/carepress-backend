@@ -68,4 +68,7 @@ router.put(
   postControllers.togglePostStatus,
 )
 
+//*get single post
+router.get('/:id', postControllers.getSinglePost)
+
 export const postRoutes = router

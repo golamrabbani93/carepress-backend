@@ -502,6 +502,17 @@ const togglePostStatusIntoDB = async (postId: string) => {
   return result
 }
 
+//*get single post
+
+const getSinglePostFromDatabase = async (postId: string) => {
+  const result = await Post.findById(postId)
+    .populate('author')
+    .populate('upvotes')
+    .populate('downvotes')
+    .populate({ path: 'comments', populate: { path: 'author' } })
+  return result
+}
+
 export const postServices = {
   createPostIntoDatabase,
   getMyPostsFromDatabase,
@@ -511,4 +522,5 @@ export const postServices = {
   updateUpVoteIntoDB,
   updateDownVoteIntoDB,
   togglePostStatusIntoDB,
+  getSinglePostFromDatabase,
 }
