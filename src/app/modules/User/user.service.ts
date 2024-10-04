@@ -4,6 +4,7 @@ import { TUser } from './user.interface'
 import AppError from '../../errors/AppError'
 import httpStatus from 'http-status'
 import mongoose from 'mongoose'
+import { Payment } from '../payment/payment.model'
 
 // *Get User Profile From Database
 const getSingleUserFromDB = async (payload: JwtPayload) => {
@@ -81,10 +82,14 @@ const unBlockUserIntoDB = async (id: string) => {
     throw new AppError(httpStatus.NOT_FOUND, 'User Not Found')
   }
 
+  // *check user premium or basic
+
+  const isPremium = await Payment.findOne({ userId: user?._id })
+
   const result = await User.findByIdAndUpdate(
     id,
     {
-      status: 'basic',
+      status: isPremium ? 'premium' : 'basic',
     },
     {
       new: true,
