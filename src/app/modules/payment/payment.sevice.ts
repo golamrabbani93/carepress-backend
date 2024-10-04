@@ -4,6 +4,7 @@ import { User } from '../User/user.model'
 import { IPayment } from './payment.interface'
 import { Payment } from './payment.model'
 import mongoose from 'mongoose'
+import QueryBuilder from '../../builder/queryBuilder'
 //* save payment into database and update user status to premium
 const savePaymentIntoDatabase = async (paymentData: IPayment) => {
   const session = await mongoose.startSession()
@@ -45,6 +46,19 @@ const savePaymentIntoDatabase = async (paymentData: IPayment) => {
   }
 }
 
+//* get all payments from database
+const getAllPaymentsFromDatabase = async (query: Record<string, unknown>) => {
+  const paymentQuery = new QueryBuilder(Payment.find(), query)
+    .filter()
+    .sort()
+    .fields()
+    .populate('userId')
+
+  const result = await paymentQuery.modelQuery
+  return result
+}
+
 export const paymentServices = {
   savePaymentIntoDatabase,
+  getAllPaymentsFromDatabase,
 }

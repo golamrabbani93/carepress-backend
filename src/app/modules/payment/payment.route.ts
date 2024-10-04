@@ -15,4 +15,6 @@ router.post(
   paymentControllers.createPayment,
 )
 
+router.get('/', auth(USER_ROLE.ADMIN), paymentControllers.getAllPayments)
+
 export const paymentRoutes = router

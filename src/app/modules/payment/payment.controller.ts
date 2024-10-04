@@ -15,6 +15,19 @@ const createPayment = catchAsync(async (req, res) => {
   })
 })
 
+//* get all payments
+const getAllPayments = catchAsync(async (req, res) => {
+  const query = req.query
+  const result = await paymentServices.getAllPaymentsFromDatabase(query)
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'All Payments fetched successfully',
+    data: result,
+  })
+})
+
 export const paymentControllers = {
   createPayment,
+  getAllPayments,
 }
