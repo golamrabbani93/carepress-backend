@@ -36,6 +36,9 @@ const getMyPosts = catchAsync(async (req: Request, res: Response) => {
 // * get all posts from database
 const getAllPosts = catchAsync(async (req: Request, res: Response) => {
   const query = req.query
+
+  console.log('🚀🚀: getAllPosts -> query', query)
+
   const result = await postServices.getAllPostsFromDatabase(query)
   sendResponse(res, {
     statusCode: 200,
@@ -77,7 +80,7 @@ const deletePost = catchAsync(async (req: Request, res: Response) => {
 const upadteUpVote = catchAsync(async (req: Request, res: Response) => {
   const postId = req.params.id
   const user = req.user
-  const result = await postServices.upadteUpVoteIntoDB(postId, user)
+  const result = await postServices.updateUpVoteIntoDB(postId, user)
   sendResponse(res, {
     statusCode: 200,
     success: true,

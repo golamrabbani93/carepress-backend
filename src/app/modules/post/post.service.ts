@@ -61,129 +61,221 @@ const deletePostFromDatabase = async (postId: string) => {
   return result
 }
 
-const upadteUpVoteIntoDB = async (postId: string, payload: JwtPayload) => {
+// const upadteUpVoteIntoDB = async (postId: string, payload: JwtPayload) => {
+//   const session = await mongoose.startSession()
+
+//   try {
+//     session.startTransaction()
+//     // find user
+//     const exitsedUser = await User.findById(payload._id)
+
+//     if (!exitsedUser) {
+//       throw new AppError(httpStatus.NOT_FOUND, 'User not found')
+//     }
+
+//     // find post
+//     const post = await Post.findById(postId)
+
+//     if (!post) {
+//       throw new AppError(httpStatus.NOT_FOUND, 'Post not found')
+//     }
+
+//     //* check if user already Downvoted
+
+//     const isDownvoted = post?.downvotes?.find((upvote) => {
+//       return upvote.toString() === exitsedUser._id.toString()
+//     })
+
+//     if (isDownvoted) {
+//       //Remove downvote
+//       const newUpVote = post?.downvotes?.filter(
+//         (upvote) => upvote.toString() !== exitsedUser._id.toString(),
+//       )
+//       const updatePostVotes = await Post.findByIdAndUpdate(
+//         postId,
+//         {
+//           downvotes: newUpVote,
+//           totalDownvotes: (post?.totalDownvotes as number) - 1,
+//         },
+//         { new: true },
+//       )
+
+//       if (!updatePostVotes) {
+//         throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+//       }
+
+//       const postAuthor = post?.author as unknown as TUser
+
+//       const updateNewvote = await User.findByIdAndUpdate(
+//         postAuthor._id,
+//         {
+//           downvotes: (postAuthor?.downvotes as number) - 1,
+//         },
+//         { new: true },
+//       )
+//       if (!updateNewvote) {
+//         throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+//       }
+//     }
+
+//     // check if user already upvoted
+//     const isUpvoted = post?.upvotes?.find((upvote) => {
+//       return upvote.toString() === exitsedUser._id.toString()
+//     })
+
+//     if (isUpvoted) {
+//       //Remove upvote
+//       const newUpVote = post?.upvotes?.filter(
+//         (upvote) => upvote.toString() != exitsedUser._id.toString(),
+//       )
+//       const updatePostVotes = await Post.findByIdAndUpdate(
+//         postId,
+//         {
+//           upvotes: newUpVote,
+//           totalUpvotes: (post?.totalUpvotes as number) - 1,
+//         },
+//         { new: true },
+//       )
+
+//       if (!updatePostVotes) {
+//         throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+//       }
+
+//       const postAuthor = post?.author as unknown as TUser
+
+//       await User.findByIdAndUpdate(
+//         postAuthor._id,
+//         {
+//           upvotes: (postAuthor?.upvotes as number) - 1,
+//         },
+//         { new: true },
+//       )
+//       const result = await Post.findById(postId)
+//         .populate('author')
+//         .populate('upvotes')
+//       await session.commitTransaction()
+//       await session.endSession()
+//       return result
+//     } else {
+//       const newUpVote = [...(post?.upvotes || []), exitsedUser._id]
+
+//       const updatePostVotes = await Post.findByIdAndUpdate(
+//         postId,
+//         {
+//           upvotes: newUpVote,
+//           totalUpvotes: (post?.totalUpvotes as number) + 1,
+//         },
+//         { new: true },
+//       )
+
+//       if (!updatePostVotes) {
+//         throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+//       }
+
+//       const postAuthor = post?.author as unknown as TUser
+
+//       await User.findByIdAndUpdate(
+//         postAuthor._id,
+//         {
+//           upvotes: (postAuthor?.upvotes as number) + 1,
+//         },
+//         { new: true },
+//       )
+//       const result = await Post.findById(postId)
+//         .populate('author')
+//         .populate('upvotes')
+//       await session.commitTransaction()
+//       await session.endSession()
+//       return result
+//     }
+//   } catch (error) {
+//     await session.abortTransaction()
+//     await session.endSession()
+//     throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+//   }
+// }
+const updateUpVoteIntoDB = async (postId: string, payload: JwtPayload) => {
   const session = await mongoose.startSession()
+
   try {
     session.startTransaction()
-    // find user
-    const exitsedUser = await User.findById(payload._id)
 
-    if (!exitsedUser) {
+    // Find user
+    const existingUser = await User.findById(payload._id).session(session)
+    if (!existingUser) {
       throw new AppError(httpStatus.NOT_FOUND, 'User not found')
     }
 
-    // find post
-    const post = await Post.findById(postId)
-
+    // Find post
+    const post = await Post.findById(postId).session(session)
     if (!post) {
       throw new AppError(httpStatus.NOT_FOUND, 'Post not found')
     }
+    const postAuthor = post?.author as unknown as TUser
 
-    //* check if user already Downvoted
-
-    const isDownvoted = post?.downvotes?.find((upvote) => {
-      return upvote.toString() === exitsedUser._id.toString()
-    })
+    // Check if user already downvoted
+    const isDownvoted = (post.downvotes ?? []).includes(existingUser._id)
 
     if (isDownvoted) {
-      //Remove downvote
-      const newUpVote = post?.downvotes?.filter(
-        (upvote) => upvote.toString() !== exitsedUser._id.toString(),
-      )
-      const updatePostVotes = await Post.findByIdAndUpdate(
-        postId,
-        {
-          downvotes: newUpVote,
-        },
-        { new: true },
-      )
-
-      if (!updatePostVotes) {
-        throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+      // Remove downvote
+      if (post.downvotes) {
+        post.downvotes = (post.downvotes ?? []).filter(
+          (id) => !id.equals(existingUser._id),
+        )
       }
+      post.totalDownvotes = (post.totalDownvotes || 0) - 1
 
-      const postAuthor = post?.author as unknown as TUser
-
-      const updateNewvote = await User.findByIdAndUpdate(
+      await post.save({ session }) // Save the updated post
+      await User.findByIdAndUpdate(
         postAuthor._id,
-        {
-          downvotes: (postAuthor?.downvotes as number) - 1 || 0,
-        },
-        { new: true },
+        { $inc: { downvotes: -1 } },
+        { session },
       )
-      if (!updateNewvote) {
-        throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
-      }
     }
 
-    // check if user already upvoted
-    const isUpvoted = post?.upvotes?.find((upvote) => {
-      return upvote.toString() === exitsedUser._id.toString()
-    })
+    // Check if user already upvoted
+    const isUpvoted = (post.upvotes ?? []).includes(existingUser._id)
 
     if (isUpvoted) {
-      //Remove upvote
-      const newUpVote = post?.upvotes?.filter(
-        (upvote) => upvote.toString() != exitsedUser._id.toString(),
-      )
-      const updatePostVotes = await Post.findByIdAndUpdate(
-        postId,
-        {
-          upvotes: newUpVote,
-        },
-        { new: true },
-      )
-
-      if (!updatePostVotes) {
-        throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+      // Remove upvote
+      if (post.upvotes) {
+        post.upvotes = (post.upvotes ?? []).filter(
+          (id) => !id.equals(existingUser._id),
+        )
       }
+      post.totalUpvotes = (post.totalUpvotes ?? 0) - 1
 
-      const postAuthor = post?.author as unknown as TUser
-
+      await post.save({ session }) // Save the updated post
       await User.findByIdAndUpdate(
         postAuthor._id,
-        {
-          upvotes: (postAuthor?.upvotes as number) - 1 || 0,
-        },
-        { new: true },
+        { $inc: { upvotes: -1 } },
+        { session },
       )
-      const result = await Post.findById(postId)
-        .populate('author')
-        .populate('upvotes')
-      await session.commitTransaction()
-      await session.endSession()
-      return result
     } else {
-      const newUpVote = [...(post?.upvotes || []), exitsedUser._id]
-
-      const updatePostVotes = await Post.findByIdAndUpdate(
-        postId,
-        {
-          upvotes: newUpVote,
-        },
-        { new: true },
-      )
-
-      if (!updatePostVotes) {
-        throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+      // Add upvote
+      if (!post.upvotes) {
+        post.upvotes = []
       }
+      post.upvotes.push(existingUser._id)
+      post.totalUpvotes = (post.totalUpvotes || 0) + 1
 
-      const postAuthor = post?.author as unknown as TUser
-
+      await post.save({ session }) // Save the updated post
       await User.findByIdAndUpdate(
         postAuthor._id,
-        {
-          upvotes: (postAuthor?.upvotes as number) + 1 || 1,
-        },
-        { new: true },
+        { upvotes: (postAuthor.upvotes || 0) + 1 },
+        { session },
       )
-      const result = await Post.findById(postId)
-        .populate('author')
-        .populate('upvotes')
-      await session.commitTransaction()
-      await session.endSession()
-      return result
     }
+
+    // Commit the transaction
+    await session.commitTransaction()
+    await session.endSession()
+
+    // Populate and return the updated post
+    return await Post.findById(postId)
+      .populate('author')
+      .populate('upvotes')
+      .exec()
   } catch (error) {
     await session.abortTransaction()
     await session.endSession()
@@ -191,132 +283,212 @@ const upadteUpVoteIntoDB = async (postId: string, payload: JwtPayload) => {
   }
 }
 
+// const updateDownVoteIntoDB = async (postId: string, payload: JwtPayload) => {
+//   const session = await mongoose.startSession()
+//   try {
+//     session.startTransaction()
+//     // find user
+//     const exitsedUser = await User.findById(payload._id)
+
+//     if (!exitsedUser) {
+//       throw new AppError(httpStatus.NOT_FOUND, 'User not found')
+//     }
+
+//     // find post
+//     const post = await Post.findById(postId)
+
+//     if (!post) {
+//       throw new AppError(httpStatus.NOT_FOUND, 'Post not found')
+//     }
+//     // check if user already upvoted
+//     const isUpvoted = post?.upvotes?.find((upvote) => {
+//       return upvote.toString() === exitsedUser._id.toString()
+//     })
+
+//     if (isUpvoted) {
+//       //Remove upvote
+//       const newUpVote = post?.upvotes?.filter(
+//         (upvote) => upvote.toString() !== exitsedUser._id.toString(),
+//       )
+//       const updatePostVotes = await Post.findByIdAndUpdate(
+//         postId,
+//         {
+//           upvotes: newUpVote,
+//           totalUpvotes: (post?.totalUpvotes as number) - 1,
+//         },
+//         { new: true },
+//       )
+
+//       if (!updatePostVotes) {
+//         throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+//       }
+
+//       const postAuthor = post?.author as unknown as TUser
+
+//       const updateNewvote = await User.findByIdAndUpdate(
+//         postAuthor._id,
+//         {
+//           upvotes: (postAuthor?.upvotes as number) - 1,
+//         },
+//         { new: true },
+//       )
+//       if (!updateNewvote) {
+//         throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+//       }
+//     }
+
+//     // check if user already Downvoted
+//     const isDownvotesUpvoted = post?.downvotes?.find((upvote) => {
+//       return upvote.toString() === exitsedUser._id.toString()
+//     })
+
+//     if (isDownvotesUpvoted) {
+//       //Remove Downvote
+//       const newDownVote = post?.downvotes?.filter(
+//         (downvote) => downvote.toString() != exitsedUser._id.toString(),
+//       )
+//       const updatePostVotes = await Post.findByIdAndUpdate(
+//         postId,
+//         {
+//           downvotes: newDownVote,
+//           totalDownvotes: (post?.totalDownvotes as number) - 1,
+//         },
+//         { new: true },
+//       )
+
+//       if (!updatePostVotes) {
+//         throw new AppError(httpStatus.BAD_REQUEST, 'DownVote not updated')
+//       }
+
+//       const postAuthor = post?.author as unknown as TUser
+
+//       await User.findByIdAndUpdate(
+//         postAuthor._id,
+//         {
+//           downvotes: (postAuthor?.downvotes as number) - 1,
+//         },
+//         { new: true },
+//       )
+//       const result = await Post.findById(postId)
+//         .populate('author')
+//         .populate('upvotes')
+//       await session.commitTransaction()
+//       await session.endSession()
+//       return result
+//     } else {
+//       const newDownvote = [...(post?.downvotes || []), exitsedUser._id]
+
+//       const updatePostVotes = await Post.findByIdAndUpdate(
+//         postId,
+//         {
+//           downvotes: newDownvote,
+//           totalDownvotes: (post?.totalDownvotes as number) + 1,
+//         },
+//         { new: true },
+//       )
+
+//       if (!updatePostVotes) {
+//         throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+//       }
+
+//       const postAuthor = post?.author as unknown as TUser
+
+//       await User.findByIdAndUpdate(
+//         postAuthor._id,
+//         {
+//           downvotes: (postAuthor?.downvotes as number) + 1,
+//         },
+//         { new: true },
+//       )
+//       const result = await Post.findById(postId)
+//         .populate('author')
+//         .populate('upvotes')
+//         .populate('downvotes')
+//       await session.commitTransaction()
+//       await session.endSession()
+//       return result
+//     }
+//   } catch (error) {
+//     await session.abortTransaction()
+//     await session.endSession()
+//     throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
+//   }
+// }
 const updateDownVoteIntoDB = async (postId: string, payload: JwtPayload) => {
   const session = await mongoose.startSession()
+
   try {
     session.startTransaction()
-    // find user
-    const exitsedUser = await User.findById(payload._id)
 
-    if (!exitsedUser) {
+    // Find user
+    const existingUser = await User.findById(payload._id).session(session)
+    if (!existingUser) {
       throw new AppError(httpStatus.NOT_FOUND, 'User not found')
     }
 
-    // find post
-    const post = await Post.findById(postId)
-
+    // Find post
+    const post = await Post.findById(postId).session(session)
     if (!post) {
       throw new AppError(httpStatus.NOT_FOUND, 'Post not found')
     }
-    // check if user already upvoted
-    const isUpvoted = post?.upvotes?.find((upvote) => {
-      return upvote.toString() === exitsedUser._id.toString()
-    })
+    const postAuthor = post?.author as unknown as TUser
 
+    // Check if user already upvoted
+    const isUpvoted = (post.upvotes ?? []).includes(existingUser._id)
     if (isUpvoted) {
-      //Remove upvote
-      const newUpVote = post?.upvotes?.filter(
-        (upvote) => upvote.toString() !== exitsedUser._id.toString(),
+      // Remove upvote
+      post.upvotes = (post.upvotes ?? []).filter(
+        (id) => !id.equals(existingUser._id),
       )
-      const updatePostVotes = await Post.findByIdAndUpdate(
-        postId,
-        {
-          upvotes: newUpVote,
-        },
-        { new: true },
-      )
+      post.totalUpvotes = (post.totalUpvotes || 0) - 1
 
-      if (!updatePostVotes) {
-        throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
-      }
-
-      const postAuthor = post?.author as unknown as TUser
-
-      const updateNewvote = await User.findByIdAndUpdate(
-        postAuthor._id,
-        {
-          upvotes: (postAuthor?.upvotes as number) - 1 || 0,
-        },
-        { new: true },
-      )
-      if (!updateNewvote) {
-        throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
-      }
-    }
-
-    // check if user already Downvoted
-    const isDownvotesUpvoted = post?.downvotes?.find((upvote) => {
-      return upvote.toString() === exitsedUser._id.toString()
-    })
-
-    if (isDownvotesUpvoted) {
-      //Remove Downvote
-      const newDownVote = post?.downvotes?.filter(
-        (downvote) => downvote.toString() != exitsedUser._id.toString(),
-      )
-      const updatePostVotes = await Post.findByIdAndUpdate(
-        postId,
-        {
-          downvotes: newDownVote,
-        },
-        { new: true },
-      )
-
-      if (!updatePostVotes) {
-        throw new AppError(httpStatus.BAD_REQUEST, 'DownVote not updated')
-      }
-
-      const postAuthor = post?.author as unknown as TUser
-
+      await post.save({ session }) // Save the updated post
       await User.findByIdAndUpdate(
         postAuthor._id,
-        {
-          downvotes: (postAuthor?.downvotes as number) - 1 || 0,
-        },
-        { new: true },
+        { $inc: { upvotes: -1 } },
+        { session },
       )
-      const result = await Post.findById(postId)
-        .populate('author')
-        .populate('upvotes')
-      await session.commitTransaction()
-      await session.endSession()
-      return result
+    }
+
+    // Check if user already downvoted
+    const isDownvoted = (post.downvotes ?? []).includes(existingUser._id)
+    if (isDownvoted) {
+      // Remove downvote
+      post.downvotes = (post.downvotes ?? []).filter(
+        (id) => !id.equals(existingUser._id),
+      )
+      post.totalDownvotes = (post.totalDownvotes || 0) - 1
+
+      await post.save({ session }) // Save the updated post
+      await User.findByIdAndUpdate(
+        postAuthor._id,
+        { $inc: { downvotes: -1 } },
+        { session },
+      )
     } else {
-      const newDownvote = [...(post?.downvotes || []), exitsedUser._id]
+      // Add downvote
+      post.downvotes = [...(post.downvotes || []), existingUser._id]
+      post.totalDownvotes = (post.totalDownvotes || 0) + 1
 
-      const updatePostVotes = await Post.findByIdAndUpdate(
-        postId,
-        {
-          downvotes: newDownvote,
-        },
-        { new: true },
-      )
-
-      if (!updatePostVotes) {
-        throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
-      }
-
-      const postAuthor = post?.author as unknown as TUser
-
+      await post.save({ session }) // Save the updated post
       await User.findByIdAndUpdate(
         postAuthor._id,
-        {
-          downvotes: (postAuthor?.downvotes as number) + 1 || 1,
-        },
-        { new: true },
+        { $inc: { downvotes: +1 } },
+        { session },
       )
-      const result = await Post.findById(postId)
-        .populate('author')
-        .populate('upvotes')
-        .populate('downvotes')
-      await session.commitTransaction()
-      await session.endSession()
-      return result
     }
+
+    // Commit the transaction
+    await session.commitTransaction()
+    return await Post.findById(postId)
+      .populate('author')
+      .populate('downvotes')
+      .exec()
   } catch (error) {
     await session.abortTransaction()
+    throw new AppError(httpStatus.BAD_REQUEST, 'Downvote not updated')
+  } finally {
     await session.endSession()
-    throw new AppError(httpStatus.BAD_REQUEST, 'Upvote not updated')
   }
 }
 
@@ -336,7 +508,7 @@ export const postServices = {
   getAllPostsFromDatabase,
   updatePostIntoDatabase,
   deletePostFromDatabase,
-  upadteUpVoteIntoDB,
+  updateUpVoteIntoDB,
   updateDownVoteIntoDB,
   togglePostStatusIntoDB,
 }

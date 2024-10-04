@@ -18,6 +18,9 @@ const PostSchema = new Schema<IPost>(
     isPremium: { type: Boolean, default: false },
     status: { type: Boolean, default: true },
     premiumPrice: { type: Number, default: 0 },
+    totalDownvotes: { type: Number, default: 0 },
+    totalUpvotes: { type: Number, default: 0 },
+    totalComments: { type: Number, default: 0 },
   },
   { timestamps: true },
 )

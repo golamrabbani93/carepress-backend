@@ -5,6 +5,9 @@ export interface IPost {
   content: string
   images: string[]
   author: mongoose.Types.ObjectId
+  totalUpvotes?: number
+  totalDownvotes?: number
+  totalComments?: number
   upvotes?: mongoose.Types.ObjectId[]
   downvotes?: mongoose.Types.ObjectId[]
   category: 'Tip' | 'Story'
