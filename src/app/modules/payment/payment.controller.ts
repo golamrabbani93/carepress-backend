@@ -27,7 +27,20 @@ const getAllPayments = catchAsync(async (req, res) => {
   })
 })
 
+//*get payment intent
+const getPaymentIntent = catchAsync(async (req, res) => {
+  const { price } = req.body as { price: number }
+  const result = await paymentServices.getPaymentIntentfromStripe(price)
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Payment Intent fetched successfully',
+    data: result,
+  })
+})
+
 export const paymentControllers = {
   createPayment,
   getAllPayments,
+  getPaymentIntent,
 }

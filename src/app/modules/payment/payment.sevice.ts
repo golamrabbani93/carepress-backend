@@ -5,6 +5,10 @@ import { IPayment } from './payment.interface'
 import { Payment } from './payment.model'
 import mongoose from 'mongoose'
 import QueryBuilder from '../../builder/queryBuilder'
+
+import Stripe from 'stripe'
+import config from '../../config'
+
 //* save payment into database and update user status to premium
 const savePaymentIntoDatabase = async (paymentData: IPayment) => {
   const session = await mongoose.startSession()
@@ -58,7 +62,23 @@ const getAllPaymentsFromDatabase = async (query: Record<string, unknown>) => {
   return result
 }
 
+// *Payment intent
+const stripe = new Stripe(config.payment_intent as string)
+
+// * get api payment intent
+const getPaymentIntentfromStripe = async (price: number) => {
+  const fixed = Number(price * 100).toFixed(2)
+  const amount = Number(fixed)
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount,
+    currency: 'usd',
+    payment_method_types: ['card'],
+  })
+  return paymentIntent.client_secret
+}
+
 export const paymentServices = {
   savePaymentIntoDatabase,
   getAllPaymentsFromDatabase,
+  getPaymentIntentfromStripe,
 }

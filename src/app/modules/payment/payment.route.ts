@@ -14,6 +14,11 @@ router.post(
   validateRequest(PaymentValidationSchema),
   paymentControllers.createPayment,
 )
+router.post(
+  '/create-payment-intent',
+  auth(USER_ROLE.USER, USER_ROLE.ADMIN),
+  paymentControllers.getPaymentIntent,
+)
 
 router.get('/', auth(USER_ROLE.ADMIN), paymentControllers.getAllPayments)
 
