@@ -36,6 +36,7 @@ const loginUser = async (payload: TLoginUser) => {
     followers: existsUser.followers || [],
     following: existsUser.following || [],
     role: existsUser.role,
+    status: existsUser.status,
     createdAt: existsUser.createdAt,
     updatedAt: existsUser.updatedAt,
   }
