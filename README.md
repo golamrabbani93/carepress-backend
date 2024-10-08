@@ -1,73 +1,69 @@
-# Project Name: BIKE RENTAL RESERVATION SYSTEM
+# Project Name: Carepress Backend
 
-## live Data Server link [https://bike-rental-reservation-system-backend.vercel.app/](https://bike-rental-reservation-system-backend.vercel.app/)
+## Description
 
-### Admin Email: robert@example.com
+**Carepress Backend** is a robust backend system for a bike rental reservation platform. It efficiently handles user registrations, bike availability, and booking management, providing a seamless experience for both users and administrators.
 
-### Admin Password: password123
+## Live Data Server Link
 
-# Getting Started how to run the application locally
+[https://carepress-backend.vercel.app/](https://carepress-backend.vercel.app/)
 
-# Step-1 `download`
+### Admin Email
 
-## Download or clone this repository
+- **Email**: admin@gmail.com
 
-# Step-2 `install`
+### Admin Password
 
-## Open This repository on VS CODE
+- **Password**: password123
 
-## open Terminal And Run This command `npm install`
+## Getting Started: How to Run the Application Locally
 
-# Step-2 `Setup .env File`
+### Step 1: Download
 
-## Create `.env File`
+Clone or download this repository.
 
-## Setup 4 Variables
+### Step 2: Install
 
-1. PORT='5000'
-2. DATABASE_url= 'your database url'
-3. SALT_ROUNDS=12
-4. NODE_ENV= development
-5. JWT_ACCESS_SECRET= 'your JWT_ACCESS_SECRET'
+1. Open this repository in VS Code.
+2. Open the terminal and run the following command:
 
-# Step-3 `Run the Server`
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-## Go to `package.json` file and read all `scripts`
+   Step 3: Setup .env File
+   1.Create a .env file in the root directory.
+   2.Setup the following variables in the .env file:
 
-## Now Go to Terminal and run this command `npm run start:dev`
+# Environment Variables
 
-# Now using This Server
+```bash
+# Port for the application
+PORT=5000
 
-### A list of technologies (libraries) used in my project.
+# MongoDB connection string (replace with your actual MongoDB connection URI)
+DATABASE_URL=mongodb+srv://<username>:<password>@cluster0.qh4qhby.mongodb.net/
 
-### 1.Typescript.
+# Database name
+DATABASE_NAME=carepress-pets-care
 
-### 2.Express.
+# Bcrypt salt rounds
+SALT_ROUNDS=12
 
-### 3.Cors.
+# Node environment (development or production)
+NODE_ENV=development
 
-### 4.json web token.
+# JWT secret for access token
+JWT_ACCESS_SECRET=<your_jwt_access_secret>
 
-### 5.bcrypt.
+# Payment intent key (replace with your actual Stripe key)
+PAYMENT_INTENT=<your_stripe_payment_intent_key>
 
-### 6.http-status.
+# Cloudinary Credentials (replace with your actual credentials)
+CLOUDINARY_CLOUD_NAME=<your_cloudinary_cloud_name>
+CLOUDINARY_API_KEY=<your_cloudinary_api_key>
+CLOUDINARY_API_SECRET=<your_cloudinary_api_secret>
 
-### 7.dotenv.
-
-### 8.mongoose.
-
-### 9.ZOD
-
-### 10.eslint
-
-### 11.prettier
-
-## What does this Project do?
-
-### This is a backend system that would handle user registrations, bike availability, and booking management efficiently
-
-# What are the features of this Project?
-
-## Users Model (auth)
-
-User creates his account and login with his gmail and password and update,get his profile with his JWT token
+```
