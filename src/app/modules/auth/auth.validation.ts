@@ -33,7 +33,32 @@ export const LoginValidationSchema = z.object({
   }),
 })
 
+//*forget password schema
+const ForgetPasswordValidationSchema = z.object({
+  body: z.object({
+    email: z.string({
+      invalid_type_error: 'Email must be string',
+      required_error: 'Email is required',
+    }),
+  }),
+})
+//*Reset password schema
+const ResetPasswordValidationSchema = z.object({
+  body: z.object({
+    userId: z.string({
+      invalid_type_error: 'userId must be string',
+      required_error: 'userId is required',
+    }),
+    newPassword: z.string({
+      invalid_type_error: 'New Password  must be string',
+      required_error: 'New Password  is required',
+    }),
+  }),
+})
+
 export const authValidationSchemas = {
   RegisterValidatioonSchema,
   LoginValidationSchema,
+  ForgetPasswordValidationSchema,
+  ResetPasswordValidationSchema,
 }

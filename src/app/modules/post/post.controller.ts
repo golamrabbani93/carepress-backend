@@ -37,8 +37,6 @@ const getMyPosts = catchAsync(async (req: Request, res: Response) => {
 const getAllPosts = catchAsync(async (req: Request, res: Response) => {
   const query = req.query
 
-  console.log('🚀🚀: getAllPosts -> query', query)
-
   const result = await postServices.getAllPostsFromDatabase(query)
   sendResponse(res, {
     statusCode: 200,
